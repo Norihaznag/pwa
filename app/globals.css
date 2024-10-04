@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+    --bg : #E98000 ;
+    
+}
+.main-bg{
+    background: var(--bg);
+}
+
+@font-face {
+    font-family: CircularStd-Book;
+    src: url('/fonts/CircularStd-Book.otf');
+}
+
+@font-face {
+    font-family: CircularStd-Medium;
+    src: url('/fonts/CircularStd-Medium.otf');
+}
+
+
+*{
+    font-family: CircularStd-Book;
+}
+
+h1{
+    font-family: CircularStd-Medium;
+}
+
+.scroller{
+        scrollbar-width: none;
+      
+}
+
+.bg-breakfast{
+    background-image: url("/images/breakfast.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.bg-lunch{
+    background-image: url("/images/lunch.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
+.bg-dinner{
+    background-image: url("/images/dinner.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+}
+
+#order-info li{
+    color: gray;
+}
+
+#order-info li span{
+    color: white;
+    font-size: larger;
+}
+
+@keyframes clicked {
+    0% {
+      transform: scale(1);
+      box-shadow: none;
+    }
+    50% {
+      transform: scale(0.95);
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: none;
+    }
+  }
+  
+  .animate-clicked {
+    animation: clicked 0.2s ease-in-out forwards;
+  }
+  

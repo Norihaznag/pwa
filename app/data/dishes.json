@@ -1,0 +1,292 @@
+[
+    {
+      "title": "Œuf Lanchon Fromage",
+      "description": "Œuf avec fromage.",
+      "price": 15,
+      "isAvailable": true,
+      "category": {
+        "id": 2
+      },
+      "options": [
+        {"price": 5, "size": "small"},
+        {"price": 10, "size": "medium"},
+        {"price": 15, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 263}, {"id": 213}, {"id": 230}
+      ]
+    },
+    {
+      "title": "Œuf Tomtat Fromage",
+      "description": "Œuf avec tomate et fromage.",
+      "price": 15,
+      "isAvailable": true,
+      "category": {
+        "id": 3
+      },
+      "options": [
+        {"price": 7, "size": "small"},
+        {"price": 12, "size": "medium"},
+        {"price": 17, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 213}, {"id": 230}
+      ]
+    },
+    {
+      "title": "Œuf au Khelii",
+      "description": "Œuf avec Khelii.",
+      "price": 18,
+      "isAvailable": true,
+      "category": {
+        "id": 4
+      },
+      "options": [
+        {"price": 8, "size": "small"},
+        {"price": 15, "size": "medium"},
+        {"price": 20, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 263}, {"id": 213}
+      ]
+    },
+    {
+      "title": "Œuf au Fromage Rouge",
+      "description": "Œuf avec fromage rouge.",
+      "price": 15,
+      "isAvailable": true,
+      "category": {
+        "id": 1
+      },
+      "options": [
+        {"price": 6, "size": "small"},
+        {"price": 12, "size": "medium"},
+        {"price": 18, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 213}, {"id": 230}
+      ]
+    },
+    {
+      "title": "Œuf Fermier",
+      "description": "Œuf fermier.",
+      "price": 12,
+      "isAvailable": true,
+      "category": {
+        "id": 5
+      },
+      "options": [
+        {"price": 5, "size": "small"},
+        {"price": 10, "size": "medium"},
+        {"price": 15, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 263}, {"id": 230}
+      ]
+    },
+    {
+      "title": "Harira Complet",
+      "description": "Harira complet.",
+      "price": 12,
+      "isAvailable": true,
+      "category": {
+        "id": 6
+      },
+      "options": [
+        {"price": 6, "size": "small"},
+        {"price": 11, "size": "medium"},
+        {"price": 16, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 263}, {"id": 213}
+      ]
+    },
+    {
+      "title": "Msemen Khelii",
+      "description": "Msemen avec Khelii.",
+      "price": 5,
+      "isAvailable": true,
+      "category": {
+        "id": 7
+      },
+      "options": [
+        {"price": 4, "size": "small"},
+        {"price": 6, "size": "medium"},
+        {"price": 8, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 213}, {"id": 230}
+      ]
+    },
+    {
+      "title": "Thé Petit",
+      "description": "Petit thé.",
+      "price": 6,
+      "isAvailable": true,
+      "category": {
+        "id": 8
+      },
+      "options": [
+        {"price": 2, "size": "small"},
+        {"price": 4, "size": "medium"},
+        {"price": 6, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 230}
+      ]
+    },
+    {
+      "title": "Thé Moyen",
+      "description": "Thé moyen.",
+      "price": 8,
+      "isAvailable": true,
+      "category": {
+        "id": 9
+      },
+      "options": [
+        {"price": 4, "size": "small"},
+        {"price": 6, "size": "medium"},
+        {"price": 8, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 230}
+      ]
+    },
+    {
+      "title": "Thé Grand XXL",
+      "description": "Thé grand taille XXL.",
+      "price": 10,
+      "isAvailable": true,
+      "category": {
+        "id": 10
+      },
+      "options": [
+        {"price": 6, "size": "small"},
+        {"price": 8, "size": "medium"},
+        {"price": 10, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 230}
+      ]
+    },
+    {
+      "title": "Ftour Fassi",
+      "description": "Œuf au Khelii, boisson chaude, œuf, jus d'orange.",
+      "price": 25,
+      "isAvailable": true,
+      "category": {
+        "id": 11
+      },
+      "options": [
+        {"price": 20, "size": "small"},
+        {"price": 25, "size": "medium"},
+        {"price": 30, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 263}, {"id": 230}
+      ]
+    },
+    {
+      "title": "Ftour Simo",
+      "description": "Msemen, Harira, fromage, œuf, jus d'orange.",
+      "price": 19,
+      "isAvailable": true,
+      "category": {
+        "id": 12
+      },
+      "options": [
+        {"price": 15, "size": "small"},
+        {"price": 20, "size": "medium"},
+        {"price": 25, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 263}, {"id": 213}
+      ]
+    },
+    {
+      "title": "Ftour Marrakech",
+      "description": "Bissara, thé, huile d'olive, miel, jus d'orange.",
+      "price": 14,
+      "isAvailable": true,
+      "category": {
+        "id": 13
+      },
+      "options": [
+        {"price": 10, "size": "small"},
+        {"price": 14, "size": "medium"},
+        {"price": 18, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 213}, {"id": 230}
+      ]
+    },
+    {
+      "title": "Ftour Beldi",
+      "description": "Huile d'olive, Amlou, miel, Jben, beurre, olives.",
+      "price": 14,
+      "isAvailable": true,
+      "category": {
+        "id": 14
+      },
+      "options": [
+        {"price": 10, "size": "small"},
+        {"price": 14, "size": "medium"},
+        {"price": 18, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 263}, {"id": 230}
+      ]
+    },
+    {
+      "title": "Gaufre Sucrée",
+      "description": "Gaufre sucrée.",
+      "price": 9,
+      "isAvailable": true,
+      "category": {
+        "id": 15
+      },
+      "options": [
+        {"price": 5, "size": "small"},
+        {"price": 7, "size": "medium"},
+        {"price": 9, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 213}, {"id": 230}
+      ]
+    },
+    {
+      "title": "Gaufre au Miel",
+      "description": "Gaufre avec miel.",
+      "price": 10,
+      "isAvailable": true,
+      "category": {
+        "id": 16
+      },
+      "options": [
+        {"price": 6, "size": "small"},
+        {"price": 8, "size": "medium"},
+        {"price": 10, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 213}, {"id": 230}
+      ]
+    },
+    {
+      "title": "Gaufre Nutella",
+      "description": "Gaufre avec Nutella.",
+      "price": 10,
+      "isAvailable": true,
+      "category": {
+        "id": 17
+      },
+      "options": [
+        {"price": 6, "size": "small"},
+        {"price": 8, "size": "medium"},
+        {"price": 10, "size": "large"}
+      ],
+      "ingredients": [
+        {"id": 213}, {"id": 230}
+      ]
+    }
+  ]
+  
