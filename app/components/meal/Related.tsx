@@ -24,7 +24,7 @@ const Related = ({ category }: any) => {
       <h2 className="text-2xl  mb-4 text-white">Related</h2>
       <div className=" grid grid-flow-col justify-start overflow-x-scroll space-x-4">
         {related.map((dish: any) => (
-             <DishCard key={dish.id} dish={dish} related={true} />
+             <DishCard key={dish.id} dish={dish} className="min-w-[200px]" />
 
         ))}
       </div>

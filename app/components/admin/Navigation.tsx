@@ -54,19 +54,19 @@ const Navigation = () => {
     <div className="h-screen flex ">
       {/* Sidebar */}
       <aside
-        className={`md:static  fixed top-0 left-0 h-screen bg-[#181818] w-[80%] md:w-52  shadow-lg transform transition-transform duration-300 ease-in-out z-40 ${
+        className={`md:static  fixed top-0 left-0 h-screen  w-[80%] md:w-52  shadow-lg transform transition-transform duration-300 ease-in-out z-40 ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
         <div className="flex items-center justify-between p-4 ">
-          <h2 className="font-bold text-white">PorFavour</h2>
+          <h2 className="font-bold ">PorFavour</h2>
         </div>
         <ul className="flex flex-col ">
           {options.map((opt, index) => (
             <li key={index}>
               <Link
                 href={`${opt.name == "home" ? "/admin/dashboard" : `/admin/dashboard/${opt.name}`}`}
-                className="flex items-center gap-2 py-2 px-4 hover:bg-[#272822]  text-white transition-colors"
+                className="flex items-center gap-2 py-2 px-4   transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {opt.icon}
@@ -77,7 +77,7 @@ const Navigation = () => {
 
 <li key={2}>
               <button
-                className="flex items-center gap-2 py-2 px-4 hover:bg-[#272822]  text-white transition-colors"
+                className="flex items-center gap-2 py-2 px-4  transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Power/>

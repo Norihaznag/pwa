@@ -1,5 +1,4 @@
-"use client"; // Ensure this is the first line in the file
-
+"use client";
 import Link from "next/link";
 import { useState, ChangeEvent } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -47,7 +46,7 @@ export default function SignIn() {
         } catch (error) {
           console.log(error);
         }
-        // router.push(`profile`);
+        router.push(`profile`);
       }
     } catch (err) {
       console.error('Error during login:', err);
@@ -76,7 +75,7 @@ export default function SignIn() {
             type="text"
             id="identifier"
             placeholder="Username or Email"
-            className="w-full px-4 py-2 rounded-md bg-[#414339] focus:outline-none focus:ring-2 focus:ring-[#0071e3] text-white"
+            className="w-full px-4 py-2 rounded-md  focus:outline-none focus:ring-2 focus:ring-[#0071e3] text-white"
             required
             onChange={handleInputChange}
           />
@@ -86,7 +85,7 @@ export default function SignIn() {
             type="password"
             id="password"
             placeholder="Password"
-            className="w-full px-4 py-2 rounded-md bg-[#414339] focus:outline-none focus:ring-2 focus:ring-[#0071e3] text-white"
+            className="w-full px-4 py-2 rounded-md  focus:outline-none focus:ring-2 focus:ring-[#0071e3] text-white"
             required
             onChange={handleInputChange}
           />

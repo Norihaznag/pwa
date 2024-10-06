@@ -3,8 +3,7 @@ import SignIn from '../components/user/login/Login'
 
 const page = () => {
   return (
-    <div className='min-h-min w-full bg-black flex justify-center items-start'>
-      
+    <div className='min-h-screen   flex justify-center items-center'>
       <SignIn/>
     </div>
   )

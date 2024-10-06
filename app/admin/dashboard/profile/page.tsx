@@ -1,15 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Delete02Icon, PencilEdit02Icon, EyeIcon , ViewOffIcon } from "hugeicons-react";
-import {
-  EditeData,
-  getUserData,
-  uploadFile,
-  VerifyUserPassword,
-} from "@/app/api/strapi";
-import PostDataLoading from "@/app/components/loaders/PostDataLoading";
-import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 interface FormData {
   id: string;
@@ -23,7 +14,7 @@ interface FormData {
   oldpassword: string;
 }
 
-const Profile: React.FC = () => {
+export default function Profile() {
   const [formData, setFormData] = useState<FormData>({
     id: "",
     username: "",
@@ -35,52 +26,32 @@ const Profile: React.FC = () => {
     password: "",
     repassword: "",
   });
-
   const [file, setFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
-  const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showRepassword, setShowRepassword] = useState<boolean>(false);
-
-  const { id } = useParams();
+  const [success, setSuccess] = useState(false);
+  const [showPasswords, setShowPasswords] = useState({
+    old: false,
+    new: false,
+    confirm: false,
+  });
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const user = await getUserData();
+    // Simulated data fetch
+    setTimeout(() => {
+      setFormData({
+        ...formData,
+        username: "JohnDoe",
+        email: "john@example.com",
+        phone: "123-456-7890",
+        role: { id: "1", name: "Admin" },
+      });
+      setIsLoading(false);
+    }, 1000);
+  }, []);
 
-        if (user.role.name == 'admin') {
-          const { username, email, phone, id, thumbnail, role } = user;
-          setFormData({
-            id,
-            username,
-            email,
-            phone,
-            role,
-            thumbnail: thumbnail.url,
-            oldpassword: "",
-            password: "",
-            repassword: "",
-          });
-          setThumbnailPreview(`${process.env.NEXT_PUBLIC_STRAPI_URL}${thumbnail.url}`);
-        }
-      } catch (error) {
-        setError("Failed to fetch user data. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUserData();
-  }, [id]);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -91,233 +62,165 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(false);
-
-    if (formData.password !== formData.repassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-
-      // Step 1: Verify old password
-      const isVerifiedPassword = await VerifyUserPassword({
-        identifier: formData.username,
-        password: formData.oldpassword,
-      });
-
-      if (!isVerifiedPassword) {
-        setError("Old password is incorrect.");
-        return;
-      }
-
-      let updatedFormData :any = { ...formData, role: formData.role.id };
-
-      // Step 2: Upload the file if available
-      if (file) {
-        const uploadedFile = await uploadFile(file);
-        if (uploadedFile) {
-          updatedFormData = { ...updatedFormData, thumbnail: uploadedFile };
-        }
-      }
-
-      // Step 3: Update the user data
-      await EditeData({
-        data: updatedFormData,
-        entry: "users",
-        id: updatedFormData.id,
-      });
-
+    setIsLoading(true);
+    // Simulated API call
+    setTimeout(() => {
       setSuccess(true);
-      setFormData(updatedFormData);
-    } catch (error) {
-      setError("Failed to update profile. Please try again later.");
-    } finally {
       setIsLoading(false);
-    }
+    }, 1000);
   };
 
-  if (isLoading) return <PostDataLoading />;
+  if (isLoading) return (
+    <div className="flex justify-center items-center h-screen">
+      Loading...
+    </div>
+  );
 
   return (
-    <div className="min-h-screen w-full flex flex-col">
-      <h1 className="text-2xl text-white mb-8">Edit Profile</h1>
-      {success && <h1 className="text-green-500 mb-4">Profile updated successfully</h1>}
-      {error && <div className="text-red-500 mb-4">{error}</div>}
-      <form
-        onSubmit={handleSubmit}
-        className="w-full text-white flex flex-col md:flex-row gap-10"
-      >
-        {/* Profile Picture */}
-        <div className="md:w-[30%] md:order-2">
-          <div className="relative w-48 rounded-full h-48 bg-[#414339] flex items-center justify-center overflow-hidden">
-            {thumbnailPreview ? (
-              <>
-                <Image
-                  src={thumbnailPreview}
-                  alt="User Thumbnail"
-                  className="rounded-xl object-fill"
-                  width={192}
-                  height={192}
-                />
-                <div className="absolute top-2 right-2 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setThumbnailPreview(null);
-                      setFile(null);
-                    }}
-                    className="z-20 rounded-full p-2 bg-[#414339] text-white"
-                  >
-                    <Delete02Icon width={24} height={24} />
-                  </button>
-                  <label className="z-20 bg-[#414339] text-white overflow-hidden relative rounded-full w-[40px] h-[40px] flex items-center justify-center cursor-pointer">
-                    <PencilEdit02Icon width={24} height={24} />
-                    <input
-                      type="file"
-                      onChange={handleFileChange}
-                      className="absolute inset-0 opacity-0 cursor-pointer"
-                    />
-                  </label>
-                </div>
-              </>
-            ) : (
-              <label className="cursor-pointer flex items-center justify-center w-full h-full">
-                <span className="text-gray-500">Upload an Image</span>
+    <div className="mx-auto">
+      <div className=" rounded-lg ">
+        <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Profile Picture */}
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full overflow-hidden border flex items-center justify-center">
+                {thumbnailPreview ? (
+                  <Image
+                    src={thumbnailPreview}
+                    alt="Profile"
+                    width={60}
+                    height={60}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-400">No Image</span>
+                )}
+              </div>
+              <div className="absolute bottom-0 right-0 flex gap-2">
+                <button
+                  type="button"
+                  className="p-2 border rounded-full hover:bg-[#444] transition-colors"
+                  onClick={() => {
+                    setThumbnailPreview(null);
+                    setFile(null);
+                  }}
+                >
+                  🗑️
+                </button>
+                <label className="p-2 border rounded-full hover:bg-[#444] transition-colors cursor-pointer">
+                  ✏️
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Basic Info */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Username
+                </label>
                 <input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="hidden"
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  className="w-full p-2 rounded border  border-[#444] focus:outline-none focus:border-[#666]"
                 />
-              </label>
-            )}
-          </div>
-        </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full p-2 rounded border  border-[#444] focus:outline-none focus:border-[#666]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full p-2 rounded border  border-[#444] focus:outline-none focus:border-[#666]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Role
+                </label>
+                <input
+                  type="text"
+                  value={formData.role.name}
+                  disabled
+                  className="w-full p-2 rounded  border border-[#444] text-gray-500 cursor-not-allowed"
+                />
+              </div>
+            </div>
 
-        {/* Form Fields */}
-        <div className="flex flex-col gap-4 md:grow">
-          <div className="flex flex-col">
-            <label htmlFor="username" className="text-gray-100">Username</label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              className="p-3 rounded-lg bg-[#414339] shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="email" className="text-gray-100">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="p-3 rounded-lg bg-[#414339] shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="phone" className="text-gray-100">Phone</label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="p-3 rounded-lg bg-[#414339] shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="role" className="text-gray-100">Role</label>
-            <input
-              type="text"
-              name="role"
-              value={formData.role.name}
-              className="p-3 rounded-lg bg-[#414339] shadow-sm"
-              disabled
-            />
-          </div>
-
-          <div className="flex flex-col relative">
-            <label htmlFor="oldpassword" className="text-gray-100">Old Password</label>
-            <div className="relative">
-              <input
-                type={showOldPassword ? "text" : "password"}
-                name="oldpassword"
-                value={formData.oldpassword}
-                onChange={handleInputChange}
-                className="p-3 rounded-lg bg-[#414339] shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                required
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-3 text-gray-500"
-                onClick={() => setShowOldPassword(!showOldPassword)}
-              >
-                {showOldPassword ? <ViewOffIcon /> : <EyeIcon />}
-              </button>
+            {/* Password Fields */}
+            <div className="space-y-4">
+              {[
+                { name: 'oldpassword', label: 'Current Password' },
+                { name: 'password', label: 'New Password' },
+                { name: 'repassword', label: 'Confirm New Password' }
+              ].map(({ name, label }) => (
+                <div key={name}>
+                  <label className="block text-sm font-medium mb-1">
+                    {label}
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPasswords[name as keyof typeof showPasswords] ? 'text' : 'password'}
+                      name={name}
+                      value={formData[name as keyof FormData]}
+                      onChange={handleInputChange}
+                      className="w-full p-2 rounded border border border-[#444] focus:outline-none focus:border-[#666] pr-10"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                      onClick={() => setShowPasswords(prev => ({
+                        ...prev,
+                        [name]: !prev[name as keyof typeof showPasswords]
+                      }))}
+                    >
+                      {showPasswords[name as keyof typeof showPasswords] ? '👁️' : '👁️‍🗨️'}
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="flex flex-col relative">
-            <label htmlFor="password" className="text-gray-100">New Password</label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="p-3 rounded-lg bg-[#414339] shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-3 text-gray-500"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <ViewOffIcon /> : <EyeIcon />}
-              </button>
-            </div>
-          </div>
-
-          <div className="flex flex-col relative">
-            <label htmlFor="repassword" className="text-gray-100">Confirm New Password</label>
-            <div className="relative">
-              <input
-                type={showRepassword ? "text" : "password"}
-                name="repassword"
-                value={formData.repassword}
-                onChange={handleInputChange}
-                className="p-3 rounded-lg bg-[#414339] shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-3 text-gray-500"
-                onClick={() => setShowRepassword(!showRepassword)}
-              >
-                {showRepassword ? <ViewOffIcon /> : <EyeIcon />}
-              </button>
-            </div>
-          </div>
+          {error && <p className="text-red-500 mt-4">{error}</p>}
+          {success && <p className="text-green-500 mt-4">Profile updated successfully!</p>}
 
           <button
             type="submit"
-            className="p-3 rounded-lg bg-indigo-600 text-white mt-4 shadow-md hover:bg-indigo-700 transition-colors"
+            className="w-full p-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
           >
             {isLoading ? "Updating..." : "Update Profile"}
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
-};
-
-export default Profile;
+}

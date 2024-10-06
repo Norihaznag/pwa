@@ -6,11 +6,12 @@ import menuReducer from './slices/menuSlice';
 import notificationReducer from './slices/notificationSlice';
 import uiSlice from './slices/uiSlice'
 import KartSlice from './slices/KartSlice'
-
+import adminReducer from './slices/adminSlice'
 
 const store = configureStore({
   reducer: {
     user: userReducer,
+    admin : adminReducer , 
     cart: cartReducer,
     orders: orderReducer,
     menu: menuReducer,

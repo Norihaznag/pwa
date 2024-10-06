@@ -1,162 +1,118 @@
-"use client";
-import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { addItem } from "@/app/redux/slices/cartSlice";
-import { getOne } from "@/app/api/strapi";
-import Related from "./Related";
-import { ShoppingBag02Icon } from "hugeicons-react";
+"use client" ;
+import React, { useState } from 'react';
+import { ShoppingCart, Clock, FlameIcon, Heart } from 'lucide-react';
+import Image from 'next/image';
 
-interface Dish {
-  title: string;
-  description: string;
-  category: { data: { attributes: { name: string } } };
-  options: Option[];
-  thumbnail: {
-    data: {
-      attributes: {
-        formats: { thumbnail: { url: string } };
-        name: string;
-      };
-    };
-  };
-  isAvailable: boolean;
-  tags: {
-    data: Array<{ id: number; attributes: { name: string } }>;
-  };
-}
+const dummyDish = {
+  id: 1,
+  title: "Margherita Supreme Pizza",
+  description: "Hand-tossed pizza crust topped with our signature tomato sauce, fresh mozzarella, cherry tomatoes, fresh basil leaves, and a drizzle of extra virgin olive oil. Baked to perfection in our wood-fired oven.",
+  category: "Pizza",
+  prepTime: "20 mins",
+  calories: 850,
+  spicyLevel: 1,
+  rating: 4.8,
+  reviews: 128,
+  tags: ["Vegetarian", "Chef's Special", "Italian"],
+  options: [
+    { id: 1, size: "Small (8\")", price: 10.99 },
+    { id: 2, size: "Medium (12\")", price: 14.99 },
+    { id: 3, size: "Large (16\")", price: 18.99 },
+  ]
+};
 
-interface Option {
-  id: number;
-  size: string;
-  price: number;
-}
-
-const MainCard = ({ id }: { id: number }) => {
-  const [dish, setDish]:any = useState(null);
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const fetchDish = async () => {
-      try {
-        const data = await getOne(id);
-        setDish(data.attributes || null);
-        if (data.attributes?.options?.length > 0) {
-          setSelectedOption(data.attributes.options[0]);
-        }
-      } catch (err: any) {
-        console.error("Error fetching dish:", err);
-      }
-    };
-    fetchDish();
-  }, [id]);
-
-  const handleOptionSelect = useCallback((opt: Option) => {
-    setSelectedOption(opt);
-  }, []);
-
-  const handleAddToCart = () => {
-    if (dish && selectedOption) {
-      dispatch(
-        addItem({
-          id,
-          ...dish,
-          options: [
-            {
-              ...selectedOption,
-              quantity: 1,
-            },
-          ],
-        })
-      );
-    }
-  };
-
-  if (!dish) {
-    return <div>Loading...</div>;
-  }
-
-  const {
-    title,
-    description,
-    category,
-    options = [],
-    thumbnail,
-    tags,
-  } = dish;
+const MainCard = () => {
+  const [selectedOption, setSelectedOption] = useState(dummyDish.options[1]);
+  const [isLiked, setIsLiked] = useState(false);
 
   return (
-    <>
-      <div className="text-[#272822] rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row items-center justify-center p-5 md:py-7">
-        <div className="w-full md:w-1/2 pt-5">
-          {thumbnail && (
-            <Image
-              src={`http://localhost:1337${thumbnail.data.attributes.url}`}
-              alt={thumbnail.data.attributes.name}
-              width={500}
-              height={500}
-              quality={100}
-              className="object-contain w-full h-auto md:h-full"
-              priority
-            />
-          )}
-        </div>
-        <div className="w-full md:w-1/2 p-8 flex flex-col justify-between">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">{title}</h1>
-            <p className="text-gray-500 mb-4">{description}</p>
-
-           
-            <ul className=" flex gap-3  flex-wrap list-inside mb-4">
-              {tags &&
-                tags.data.map((tag:any) => (
-                  <li key={tag.id} className="text-white bg-[#414339] px-2 p-1 rounded-lg text-sm">
-                    {tag.attributes.name}
-                  </li>
-                ))}
-            </ul>
-          </div>
-
-          <div className="mt-4">
-            <div className="flex flex-wrap gap-2">
-              {options.map((opt:any) => (
-                <button
-                  key={opt.id}
-                  className={`flex items-center rounded-lg px-2 py-1 text-sm md:text-base bg-[#414339] hover:border-2 ${
-                    opt.size === selectedOption?.size
-                      ? "border-[#c9209e] border-2"
-                      : ""
-                  }`}
-                  onClick={() => handleOptionSelect(opt)}
-                  aria-label={`Select ${opt.size} size option`}
-                >
-                  <div className="flex flex-col">
-                    <span className="capitalize">{opt.size}</span>
-                    <span className="text-[#ee007b] font-semibold">
-                      {opt.price} <span className="text-xs">dh</span>
-                    </span>
-                  </div>
-                </button>
-              ))}
+    <div className="max-w-7xl mx-auto p-4">
+      <div className="bg-white rounded-2xl  overflow-hidden">
+        <div className="flex flex-col lg:flex-row">
+          {/* Image Section */}
+          <div className="lg:w-1/2 relative">
+            <div className="aspect-square relative">
+              <Image
+                src="/images/placeholder.svg"
+                width={400}
+                height={400}
+                alt={dummyDish.title}
+                className="object-cover w-full h-full"
+              />
+              <button 
+                onClick={() => setIsLiked(!isLiked)}
+                className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200"
+              >
+                <Heart className={`w-6 h-6 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+              </button>
             </div>
           </div>
 
-          <div className="mt-4 flex items-center justify-between">
-            <button
-              onClick={handleAddToCart}
-              className="w-full md:w-auto hover:bg-slate-800 py-2 px-4 transition duration-300 rounded-lg bg-black text-white flex gap-2 items-center justify-center"
-              aria-label="Add to cart"
-            >
-              <ShoppingBag02Icon className="w-5 h-5 md:w-6 md:h-6" />
-              <span className="hidden md:inline">Add to Cart</span>
+          {/* Content Section */}
+          <div className="lg:w-1/2 p-6 lg:p-8 flex flex-col">
+            <div className="flex-grow">
+              {/* Title and Tags */}
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{dummyDish.title}</h1>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {dummyDish.tags.map((tag, index) => (
+                  <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Description */}
+              <p className="text-gray-600 mb-6">{dummyDish.description}</p>
+
+              {/* Info Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-gray-500" />
+                  <span className="text-sm text-gray-600">{dummyDish.prepTime}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FlameIcon className="w-5 h-5 text-orange-500" />
+                  <span className="text-sm text-gray-600">{dummyDish.calories} cal</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-yellow-500 text-nowrap">★ {dummyDish.rating}</span>
+                  <span className="text-sm text-gray-600 text-nowrap">({dummyDish.reviews} reviews)</span>
+                </div>
+              </div>
+
+              {/* Size Options */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3">Choose Your Size</h3>
+                <div className="flex flex-wrap gap-3">
+                  {dummyDish.options.map((option) => (
+                    <button
+                      key={option.id}
+                      onClick={() => setSelectedOption(option)}
+                      className={`flex-1 sm:flex-none px-4 py-2 rounded-lg transition-all duration-200 ${
+                        selectedOption.id === option.id
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                      }`}
+                    >
+                      <div className="text-sm font-medium">{option.size}</div>
+                      <div className={selectedOption.id === option.id ? 'text-white' : 'text-gray-600'}>
+                        ${option.price}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Add to Cart Button */}
+            <button className="w-full bg-blue-500 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-600 transition-colors duration-200">
+              <ShoppingCart className="w-5 h-5" />
+              <span className="font-medium">Add to Cart - ${selectedOption.price}</span>
             </button>
           </div>
         </div>
       </div>
-
-      {category && <Related category={category.data.attributes.name} />}
-    </>
+    </div>
   );
 };
 

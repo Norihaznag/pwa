@@ -90,7 +90,7 @@ export default function Home() {
             <div key={dish.id} className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-200">
               <div className="relative h-48">
                 <Image
-                  src={dish.imageUrl}
+                  src={"/images/placeholder.svg"}
                   alt={dish.name}
                   fill
                   className="object-cover"
@@ -114,10 +114,10 @@ export default function Home() {
       <section className="bg-gradient-to-r from-orange-500 to-orange-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">Ready to Order?</h2>
-          <p className="mb-8 text-lg">Download our app and get 20% off on your first order!</p>
+          <p className="mb-8 text-lg">get 20% off on your first order!</p>
           <Link href="/download" 
                 className="inline-block bg-white text-orange-500 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors duration-200">
-            Download App
+            Order Now !
           </Link>
         </div>
       </section>

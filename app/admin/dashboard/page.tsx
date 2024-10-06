@@ -1,49 +1,54 @@
 "use client";
 import { getOrder, getData, UpdateOrderStatus } from "@/app/api/strapi";
-import Create from "@/app/components/admin/create/Create";
-import Display from "@/app/components/admin/order/Display";
-import Stat from "@/app/components/admin/StatisticsCard";
+import { useEffect, useState, useCallback } from "react";
 import {
   Clock3Icon,
   Notebook,
   User,
-  UserCheck,
   ShoppingCartIcon,
-  NotebookTabsIcon,
   Pizza as LucidePizza
 } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+
+// Define TypeScript interfaces
+interface Order {
+  id: number;
+  attributes: {
+    name: string;
+    address: string;
+    phone: string;
+    status: string;
+  };
+}
+
+interface StatItem {
+  name: string;
+  icon: JSX.Element;
+  length: number;
+}
 
 const Dashboard = () => {
-  const [stats, setStats] = useState([
-    { name: 'orders', icon: <Notebook />, length: 0 },
-    { name: 'users', icon: <User />, length: 0 },
-    { name: 'dishes', icon: <LucidePizza />, length: 0 },
+  const [stats, setStats] = useState<StatItem[]>([
+    { name: 'Orders', icon: <Notebook />, length: 0 },
+    { name: 'Users', icon: <User />, length: 0 },
+    { name: 'Dishes', icon: <LucidePizza />, length: 0 },
   ]);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [todayOrders, setTodayOrder] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const router = useRouter();
-  const path = usePathname();
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const options = ["pending", "processing", "shipped", "delivered"];
+  const options = ["pending", "processing", "shipped", "delivered"] as const;
+  type OrderStatus = typeof options[number];
 
-  const handleStatusChange = useCallback(async (orderId:any, newStatus:any) => {
-    if (!orderId || !newStatus) {
-      console.error("Invalid orderId or newStatus");
-      return;
-    }
+  const handleStatusChange = useCallback(async (orderId: number, newStatus: OrderStatus) => {
+    if (!orderId || !newStatus) return;
 
     try {
       await UpdateOrderStatus(orderId, newStatus);
-      console.log(`Updated order ${orderId} status to ${newStatus}`);
-
-      setOrders((prevOrders:any) =>
-        prevOrders.map((order:any) =>
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
           order.id === orderId
             ? { ...order, attributes: { ...order.attributes, status: newStatus } }
             : order
@@ -58,20 +63,22 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const ordersData = await getData({ data: 'orders' });
+        const [ordersData, todayOrdersData, ...statsData] = await Promise.all([
+          getData({ data: 'orders' }),
+          getData({ data: 'orders', onlyToday: true, meta: true }),
+          ...stats.map(stat => getData({ data: stat.name }))
+        ]);
+
         setOrders(ordersData.data || []);
-        const TodayOrder = await getData({ data: 'orders', onlyToday: true, meta: true });
-        setTodayOrder(TodayOrder?.meta?.pagination?.total || 0);
-        const updatedStats = await Promise.all(
-          stats.map(async (stat) => {
-            const res = await getData({ data: stat.name });
-            return { ...stat, length: res?.length || 0 };
-          })
-        );
+        setTodayOrder(todayOrdersData?.meta?.pagination?.total || 0);
+        
+        const updatedStats = stats.map((stat, index) => ({
+          ...stat,
+          length: statsData[index]?.length || 0
+        }));
         setStats(updatedStats);
       } catch (err) {
         setError("Failed to fetch data");
-        console.error("Error fetching data:", err);
       } finally {
         setIsLoading(false);
       }
@@ -79,113 +86,97 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  const filteredOrders = orders.filter((order:any) =>
+  const filteredOrders = orders.filter((order) =>
     Object.values(order.attributes || {}).some((value) =>
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
-  console.log(orders)
-
-  if (isLoading) return <div className="text-white">Loading...</div>;
-  if (error) return <div className="text-white">Error: {error}</div>;
+  if (isLoading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  if (error) return <div className="flex items-center justify-center h-screen text-red-500">{error}</div>;
 
   return (
-    <div className="min-h-screen w-full relative">
-      <div className="states w-full min-h-fit flex flex-wrap gap-2 text-white mb-6">
+    <div className="min-h-screen p-4 bg-gray-50">
+      {/* Stats section */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
         {stats.map((el) => (
-          <Stat length={el.length} icon={el.icon} name={el.name} key={el.name} />
+          <div key={el.name} className="flex items-center p-4 bg-white rounded-lg shadow-md">
+            <div className="mr-4 text-blue-600">{el.icon}</div>
+            <div>
+              <h4 className="font-semibold text-gray-700">{el.name}</h4>
+              <p className="text-gray-500">{el.length}</p>
+            </div>
+          </div>
         ))}
-        <Stat length={todayOrders} icon={<Clock3Icon />} name="today orders" key="today-orders" />
+        <div className="flex items-center p-4 bg-white rounded-lg shadow-md">
+          <Clock3Icon className="mr-4 text-blue-600" />
+          <div>
+            <h4 className="font-semibold text-gray-700">Today's Orders</h4>
+            <p className="text-gray-500">{todayOrders}</p>
+          </div>
+        </div>
       </div>
-      <div className="LatestOrders w-full min-h-fit text-white">
-        <header className="flex gap-2 mb-2">
-          <NotebookTabsIcon width={40} height={40} />
-          <h1 className="text-[2rem]">Latest orders</h1>
-        </header>
+
+      {/* Orders section */}
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Latest Orders</h2>
         <input
           type="search"
-          className="h-12 bg-[#414339] w-full indent-3 mb-4 rounded"
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
           placeholder="Search Orders"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-
-        <div className="overflow-x-auto rounded-lg">
-          <table className="w-full min-w-[640px] table-auto">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
             <thead>
-              <tr className="border-b bg-[#181818] border-gray-800">
-                <th className="py-3 px-4 text-left text-sm font-medium">ID</th>
-                <th className="py-3 px-4 text-left text-sm font-medium">Name</th>
-                <th className="py-3 px-4 text-left text-sm font-medium">Address</th>
-                <th className="py-3 px-4 text-left text-sm font-medium">Phone</th>
-                <th className="py-3 px-4 text-left text-sm font-medium">Status</th>
-                <th className="py-3 px-4 text-left text-sm font-medium">Cart</th>
+              <tr className="border-b">
+                <th className="py-3 px-4 text-sm">ID</th>
+                <th className="py-3 px-4 text-sm">Name</th>
+                <th className="py-3 px-4 text-sm">Address</th>
+                <th className="py-3 px-4 text-sm">Phone</th>
+                <th className="py-3 px-4 text-sm">Status</th>
+                <th className="py-3 px-4 text-sm">Action</th>
               </tr>
             </thead>
             <tbody>
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-4">
-                    No orders found.
-                  </td>
+                  <td colSpan={6} className="text-center py-4">No orders found.</td>
                 </tr>
               ) : (
-                filteredOrders.map((order:any) => {
-                  const {
-                    id,
-                    attributes: { name, address, phone, status } = {},
-                  } = order || {};
-                  return (
-                    <tr
-                      key={id}
-                      className="border-b hover:bg-[#181818] border-gray-800"
-                    >
-                      <td className="py-3 px-4 text-sm">{id}</td>
-                      <td className="py-3 px-4 text-sm">{name || 'N/A'}</td>
-                      <td className="py-3 px-4 text-sm">{address || 'N/A'}</td>
-                      <td className="py-3 px-4 text-sm">{phone || 'N/A'}</td>
-                      <td className="py-3 px-4">
-                        <select
-                          value={status || ''}
-                          onChange={(e) => handleStatusChange(id, e.target.value)}
-                          className="bg-gray-800 text-white text-sm rounded-md border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-colors duration-200 ease-in-out capitalize"
-                        >
-                          {options.map((opt) => (
-                            <option
-                              key={opt}
-                              value={opt}
-                              className="capitalize p-2"
-                            >
-                              {opt}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="flex justify-center items-center p-2">
-                        <button
-                          onClick={() => setSelectedOrder(order)}
-                          className="bg-[rgb(25,0,12)] hover:bg-[rgb(56,0,27)] p-2 rounded-lg"
-                        >
-                          <ShoppingCartIcon
-                            width={24}
-                            height={24}
-                            color="#ff00c3"
-                          />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
+                filteredOrders.map((order) => (
+                  <tr key={order.id} className="border-b">
+                    <td className="py-3 px-4 text-sm">{order.id}</td>
+                    <td className="py-3 px-4 text-sm">{order.attributes.name || 'N/A'}</td>
+                    <td className="py-3 px-4 text-sm">{order.attributes.address || 'N/A'}</td>
+                    <td className="py-3 px-4 text-sm">{order.attributes.phone || 'N/A'}</td>
+                    <td className="py-3 px-4">
+                      <select
+                        value={order.attributes.status || ''}
+                        onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
+                        className="text-sm p-2 border border-gray-300 rounded"
+                      >
+                        {options.map((opt) => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="py-3 px-4">
+                      <button
+                        onClick={() => setSelectedOrder(order)}
+                        className="p-2 bg-blue-500 text-white rounded"
+                      >
+                        <ShoppingCartIcon width={18} height={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
-          <Create />
         </div>
       </div>
-      {selectedOrder && (
-        <Display order={selectedOrder} onClose={() => setSelectedOrder(null)} />
-      )}
     </div>
   );
 };

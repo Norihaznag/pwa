@@ -125,10 +125,10 @@ const DishesPage = () => {
           
             <div className="flex gap-2">
              
-              <Filters
+              {/* <Filters
                 onFilterChange={handleFilterChange}
                 categories={categories}
-              />
+              /> */}
             </div>
           
           
@@ -154,7 +154,7 @@ const DishesPage = () => {
           {dishes.data.length === 0 ? (
             <h1>No dishes found. Try adjusting your search or filters.</h1>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2  gap-6">
               {dishes.data.map((dish: any) => (
                 <EDishCard HandelDelete={()=> {HandelDeletetion(dish.id)}} key={dish.id} dish={dish} mobile={true} />
               ))}

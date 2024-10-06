@@ -1,13 +1,13 @@
-import Page from '@/app/components/Page'
-import Login from '@/app/components/user/login/Login'
-import React from 'react'
+import Page from "@/app/components/Page";
+import Login from "@/app/components/user/login/Login";
+import React from "react";
 
 const page = () => {
   return (
-    <Page className="flex justify-center items-center ">
-      <Login/>
-    </Page>
-  )
-}
+    <div className="min-h-screen flex justify-center items-center">
+      <Login />
+    </div>
+  );
+};
 
-export default page
+export default page;
